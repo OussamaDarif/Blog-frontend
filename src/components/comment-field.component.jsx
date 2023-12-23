@@ -4,11 +4,7 @@ import { BlogPageContext } from "./blog-page";
 
 const CommentField = ({ action, index = undefined, replyingTo = undefined, setReplying }) => {
 
-    // let { blog, blog: { _id, comments, comments: { results: commentsArr }, activity, author: { _id: blog_author } ,activity: {  } }, } = useContext(BlogPageContext);
-
     const [ comment ] = useState("");
-
-
 
     return (
         <div className="text-center">

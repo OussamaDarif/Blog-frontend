@@ -52,7 +52,7 @@ const BlogPage = () => {
                                 <p className="capitalize">
                                     {fullname}
                                     <br />
-                                    @<Link to={`/user/${author_username}`} className="underline">{author_username}</Link>
+                                    @<Link to={`/user/${author_username}`} className="underline">{fullname}</Link>
                                 </p>
                             </div>
                             <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
@@ -65,12 +65,12 @@ const BlogPage = () => {
                         </div>
 
                         <BlogInteraction />
+                        <CommentField/>
                     </div>
                     {blogComments.length > 0 && <CommentsContainer commentsData={blogComments} />}
                 </div>
 
                 </BlogPageContext.Provider>
-                <CommentField/>
             </AnimationWrapper>
         );
 };
