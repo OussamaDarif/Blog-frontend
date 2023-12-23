@@ -1,0 +1,163 @@
+export const staticBlogs = [
+  {
+    id: 1,
+    comments: [1, 2],
+    title: "The Benefits of Regular Exercise",
+    content: "Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being. Regular exercise has numerous health benefits, including improved cardiovascular health, enhanced mood, and better overall well-being.",
+    author: { personal_info: { name: "Dr. Sarah Johnson", profile_img: "/userprofile.png", profile_username: "dr_sarah" } },
+    publishedAt: "2023-01-15T10:30:00Z",
+    tags: ["Fitness", "Exercise", "Wellness"],
+    des: "Discover the positive impact of incorporating exercise into your daily routine for a healthier life.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 25,total_comments:30, },
+    
+  },
+  {
+    id: 2,
+    comments: [3, 4],
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 30,total_comments:30, },
+  },
+  {
+    id: 3,
+    comments: [5],
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 30,total_comments:30, },
+  },
+  {
+    id: 4,
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 30,total_comments:30, },
+    comments: [],
+  },
+
+
+];
+
+export const staticTrendingBlogs = [
+  {
+    id: 101,
+    fullname:"Reda Himmi",
+    profile_username:"Redox",
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 30 ,total_comments:30,},
+    profile_img:"/userprofile.png",
+
+  },
+  {
+    id: 102,
+    fullname:"Oussama Darif",
+    profile_username:"odarif",
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    activity: { total_likes: 30,total_comments:30, },
+    profile_img:"/userprofile.png",
+
+  },  {
+
+    id: 103,
+    fullname:"Hamza ELAAFANI",
+    profile_username:"Hmiza",
+    title: "Healthy Eating Habits for a Balanced Life",
+    content: "Eating a well-balanced diet rich in fruits, vegetables, and whole grains is essential for maintaining optimal health and preventing chronic diseases.",
+    author: { personal_info: { name: "Nutrition Expert Emily Davis", profile_img: "/userprofile.png", profile_username: "nutrition_emily" } },
+    publishedAt: "2023-02-10T14:45:00Z",
+    tags: ["Nutrition", "Healthy Eating", "Wellness"],
+    des: "Explore the importance of making mindful food choices and adopting healthy eating habits.",
+    banner: "/userprofile.png",
+    profile_img:"/userprofile.png",
+    activity: { total_likes: 30 ,total_comments:30,},
+  },
+];
+export const staticComments = [
+  {
+    id: 1,
+    user: {
+      id: 101,
+      username: 'john_doe',
+      profile_img: 'https://example.com/john-doe.jpg',
+      fullname: 'John Doe',
+    },
+    content: 'This is an amazing blog post!',
+    createdAt: '2023-03-01T08:00:00Z',
+    children: [2, 4], 
+  },
+  {
+    id: 2,
+    user: {
+      id: 102,
+      username: 'jane_smith',
+      profile_img: 'https://example.com/jane-smith.jpg',
+      fullname: 'Jane Smith',
+    },
+    content: 'I agree, the content is insightful.',
+    createdAt: '2023-03-01T08:15:00Z',
+    children: [3],
+  },
+  {
+    id: 3,
+    user: {
+      id: 103,
+      username: 'bob_jones',
+      profile_img: 'https://example.com/bob-jones.jpg',
+      fullname: 'Bob Jones',
+    },
+    content: 'Great discussion!',
+    createdAt: '2023-03-01T08:30:00Z',
+    children: [], 
+  },
+  {
+    id: 4,
+    user: {
+      id: 104,
+      username: 'emily_white',
+      profile_img: 'https://example.com/emily-white.jpg',
+      fullname: 'Emily White',
+    },
+    content: 'The author provided useful information.',
+    createdAt: '2023-03-01T09:00:00Z',
+    children: [],
+  },
+  {
+    id: 5,
+    user: {
+      id: 105,
+      username: 'alice_green',
+      profile_img: 'https://example.com/alice-green.jpg',
+      fullname: 'Alice Green',
+    },
+    content: 'Looking forward to more posts from this author!',
+    createdAt: '2023-03-02T10:45:00Z',
+    children: [], 
+  },
+];
+
