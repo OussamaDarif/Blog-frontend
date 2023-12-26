@@ -1,212 +1,135 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 import logo from "../imgs/logo.png";
 import EditorJS from "@editorjs/editorjs";
-import { Toaster } from "react-hot-toast";
+import { FaDeleteLeft } from "react-icons/fa6";
+// import { toast } from "react-toastify";
 
-import React from 'react'
-export const blogStructure = {
-    title: "",
-    banner: "",
-    content: [],
-    tags: [],
-    des: "",
-    author: { personal_info: { } }
-}
+import React from "react";
+import { useCreatePost } from "../graphql/hooks";
 
 export const BlogEditor = () => {
-    // const { blog, setBlog, textEditor, setTextEditor, setEditorState } = useContext(EditorContext);
-    // const { userAuth: { access_token } } = useContext(UserContext);
-    // const navigate = useNavigate();
-    // const blogBannerRef = useRef();
+  const [blog, setBlog] = useState({
+    title: "",
+    content: "",
+    image: "",
+    tags: [],
+  });
+  const [textEditor, setTextEditor] = useState(null);
+  const { createPost } = useCreatePost();
 
-    useEffect(() => {
-        let editor= new EditorJS({
-            holderId: "textEditor",
-            data: '',
-            placeholder: "Write here your blog !",
-        })
-        
-    }, [])
-
-    const handleBannerUpload = (e) => {
-        let img = e.target.files[0];
-
-        if (img) {
-            let loadingToast = toast.loading("Uploading....");
-
-            uploadImage(img).then((url) => {
-                if (url) {
-                    setBlog(latestBlogObj => ({ ...latestBlogObj, banner: url }))
-
-                    toast.dismiss(loadingToast);
-                    toast.success("Uploaded 👍");
-
-                    blogBannerRef.current.src = url;
-                }
-            }).catch(err => {
-                toast.dismiss(loadingToast);
-                return toast.error(err)
-            })
-        }
-    };
-
-    const handleTitleKeyStroke = (e) => {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-        }
-    };
-
-    const handleTitleChange = (e) => {
-        let input = e.target;
-
-        input.style.height = null;
-        input.style.height = input.scrollHeight + "px";
-
-        // setBlog({ ...blog, title: input.value })
-    };
-
-    const handlePublishEvent = (e) => {
-        e.preventDefault();
-        
-        if(!banner.length) {
-            return toast.error("Upload a blog banner to publish it");
-        }
-        if(!title.length){
-            return toast.error("Write blog title to publish it");
-        }
-
-        if(textEditor.isReady){
-            textEditor.save().then(data => {
-                if(data.blocks.length){
-                    setBlog({ ...blog, content: data });
-                    setEditorState("publish");
-                } else{
-                    return toast.error("Write something in your blog to publish it");
-                }
-            }).catch((error) => {
-                console.log(error)
-            });
-        }
-    };
-
-    const handleSaveDraft = (e) => {
-        e.preventDefault();
-        
-        if(!title.length){
-            return toast.error("You must provie a title to save this draft");
-        }
-
-        // saving draft
-
-        let loadingToast = toast.loading("Publishing....");
-
-        e.target.classList.add('disable');
-
-        if(textEditor.isReady){
-            textEditor.save().then(async data => {
-                let content = data.blocks.length ? data : [];
-
-                let blogObj = { title, des, banner, tags, content, draft: true }
-
-                axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", { ...blogObj, id: blog_id }, {
-                    headers: {
-                        'Authorization': `Bearer ${access_token}`
-                    }
-                })
-                .then(( ) => {
-                    e.target.classList.remove('disable');
-
-                    toast.dismiss(loadingToast);
-                    toast.success("Draft Saved 👍");
-    
-                    resetEditor();
-    
-                    setTimeout(() => {
-                        navigate(`/dashboard/blogs?tab=draft`);
-                    }, 500);
-                })
-                .catch(({ response }) => {
-                    e.target.classList.remove('disable');
-    
-                    toast.dismiss(loadingToast);
-                    return toast.error(response.data.error);
-                })
-            })
-        }
-    }
-
-    const handleBannerImageError = (e) => {
-        e.target.src = defaultBanner;
-    }
-
-    const resetEditor = () => {
-        setTextEditor({ isReady: false });
-    }
-
-
-
-    return (
-        <>
-            <nav className="navbar">
-                <Link to="/" className="flex-none w-10">
-                    <img src={logo} />
-                </Link>
-                <p className="text-xl font-bold">
-                     Med Blog
-                </p>
-
-                <div className="flex gap-4 ml-auto">
-                    <button className="btn-dark py-2" 
-                    >
-                        Publish
-                    </button>
-
-                    <button className="btn-light py-2"
-                    >
-                        Save Draft
-                    </button>
-                        
-                </div>
-            </nav>
-
-            <Toaster />
-
-                <section>
-                    <div className="mx-auto max-w-[900px] w-full">
-
-                        <div className="relative aspect-video hover:opacity-80 bg-white border-4 border-grey">
-                            <label
-                                htmlFor="uploadBanner"
-                            >
-                                <img
-                                    className="z-20"
-                                />
-                                <input
-                                    id="uploadBanner"
-                                    type="file"
-                                    accept=".png, .jpg, .jpeg"
-                                    hidden
-
-                                />
-                            </label>
-                        </div>
-
-                        <textarea
-                            placeholder="Blog Title"
-                            onKeyDown={handleTitleKeyStroke}
-                            className="text-4xl font-medium placeholder:opacity-40 w-full h-20 outline-none resize-none mt-10 leading-tight overflow-hidden"
-                            onChange={handleTitleChange}
-                        ></textarea>
-
-                        <hr className="w-full opacity-10 my-5" />
-
-                        <div id="textEditor" className="font-gelasio"></div>
-
-                    </div>
-                </section>
-
-        </>
+  useEffect(() => {
+    setTextEditor(
+      new EditorJS({
+        holderId: "textEditor",
+        data: "",
+        placeholder: "Write here your blog !",
+      })
     );
-}
+  }, []);
 
+  const handleTitleKeyStroke = (e) => {
+    if (e.keyCode == 13) {
+      e.preventDefault();
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    let input = e.target;
+
+    input.style.height = null;
+    input.style.height = input.scrollHeight + "px";
+
+    setBlog((blog) => ({ ...blog, title: input.value }));
+  };
+
+  const handleImageChange = (e) => {
+    setBlog((blog) => ({ ...blog, image: e.target.files[0] }));
+  };
+
+  const handlePublish = async (e) => {
+    e.preventDefault();
+
+    if (!blog.image) {
+      return toast.error("Upload a blog image to publish it");
+    }
+    if (!blog.title.length) {
+      return toast.error("Write blog title to publish it");
+    }
+
+    if (textEditor.isReady) {
+      try {
+        const data = await textEditor.save();
+
+        if (data.blocks.length) {
+          setBlog((blog) => ({
+            ...blog,
+            content: data?.blocks[0]?.data?.text ?? "",
+          }));
+          await createPost({
+            title: blog.title,
+            file: blog.image,
+            content: data?.blocks[0]?.data?.text ?? "",
+          });
+        } else {
+          return toast.error("Write something in your blog to publish it");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  return (
+    <>
+      <nav className="navbar">
+        <Link to="/home" className="flex-none w-10">
+          <img src={logo} />
+        </Link>
+        <p className="text-xl font-bold">Med Blog</p>
+
+        <div className="flex gap-4 ml-auto">
+          <button className="btn-dark py-2" onClick={handlePublish}>
+            Publish
+          </button>
+        </div>
+      </nav>
+
+      <Toaster />
+
+      <section>
+        <div className="mx-auto max-w-[900px] w-full">
+          <div className="relative aspect-video hover:opacity-80 bg-white border-4 border-grey">
+            <label htmlFor="uploadBanner">
+              {blog?.image ? (
+                <img className="z-20" src={URL.createObjectURL(blog?.image)} />
+              ) : (
+                <img className="z-20" />
+              )}
+              <input
+                id="uploadBanner"
+                type="file"
+                accept=".png, .jpg, .jpeg"
+                onChange={handleImageChange}
+                hidden
+              />
+            </label>
+          </div>
+
+          <textarea
+            placeholder="Blog Title"
+            onKeyDown={handleTitleKeyStroke}
+            className="text-4xl font-medium placeholder:opacity-40 w-full h-20 outline-none resize-none mt-10 leading-tight overflow-hidden"
+            onChange={handleTitleChange}
+            value={blog.title}
+          ></textarea>
+
+          <hr className="w-full opacity-10 my-5" />
+
+          <div id="textEditor" className="font-gelasio"></div>
+        </div>
+      </section>
+    </>
+  );
+};
