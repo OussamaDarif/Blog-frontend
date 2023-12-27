@@ -226,8 +226,15 @@ export function usePosts() {
 
 export function usePost(id) {
   const { dispatch } = usePostContext();
+  const {user} = useAuthContext();
+  const headers = user?.token ? {
+    "Authorization": `Bearer ${user?.token}` 
+  } : {};
   const { data, loading, error } = useQuery(POST_QUERY, {
     variables: { id },
+    context: {
+      headers
+    },
     onCompleted: ({ post }) => {
       dispatch({
         type: "SET_POST",

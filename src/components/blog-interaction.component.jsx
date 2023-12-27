@@ -7,7 +7,7 @@ const BlogInteraction = () => {
   const { post } = usePostContext();
   let { title, id, likes, isLiked } = post || {};
   const { react, loading, error } = useReact();
-  console.log(isLiked)
+  
   const handleLike = async () => {
     await react({ postId: id });
   };

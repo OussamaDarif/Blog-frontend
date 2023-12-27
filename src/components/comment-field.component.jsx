@@ -6,7 +6,6 @@ const CommentField = ({ postId }) => {
   const { loading, error, comment: commentHandler } = useComment();
 
   const handleCommentButton = async (event) => {
-    console.log(comment);
     await commentHandler({ postId, content: comment });
     setComment("");
   };

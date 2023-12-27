@@ -45,7 +45,7 @@ export const BlogEditor = () => {
   };
 
   const handleAddition = (tag) => {
-    console.log(tag)
+    console.log(tag);
     setBlog((blog) => ({ ...blog, tags: [...blog.tags, tag] }));
   };
 
@@ -95,12 +95,16 @@ export const BlogEditor = () => {
         if (data.blocks.length) {
           setBlog((blog) => ({
             ...blog,
-            content: data?.blocks[0]?.data?.text ?? "",
+            content: data?.blocks
+              .map((block) => block?.data?.text ?? "")
+              .join("\n"),
           }));
           await createPost({
             title: blog.title,
             file: blog.image,
-            content: data?.blocks[0]?.data?.text ?? "",
+            content: data?.blocks
+              .map((block) => block?.data?.text ?? "")
+              .join("\n"),
             tags: blog.tags,
           });
         } else {
@@ -137,8 +141,7 @@ export const BlogEditor = () => {
                 <img className="z-20" src={URL.createObjectURL(blog?.image)} />
               ) : (
                 <div className="h-full w-full flex justify-center items-center">
-
-                <PiUploadSimpleFill className="z-20 w-56 h-56" />
+                  <PiUploadSimpleFill className="z-20 w-56 h-56" />
                 </div>
               )}
               <input
