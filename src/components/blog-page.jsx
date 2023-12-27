@@ -9,70 +9,76 @@ import BlogContent from "../components/blog-content.component";
 import CommentsContainer from "../components/comments.component";
 import { staticBlogs, staticComments } from "../staticData";
 import CommentField from "./comment-field.component";
+import { usePost } from "../graphql/hooks";
+import { toast } from "react-toastify";
 
-export const BlogPageContext = createContext({});
 
 const BlogPage = () => {
-    let { blog_id } = useParams();
-    const [blog, setBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [blogComments, setBlogComments] = useState([]);
+  const { blog_id } = useParams();
 
-    useEffect(() => {
-        const foundBlog = staticBlogs.find(blog => blog.id === parseInt(blog_id));
-        if (foundBlog) {
-            setBlog(foundBlog);
-            const relatedComments = staticComments.filter(comment => foundBlog.comments.includes(comment.id));
-            setBlogComments(relatedComments);
-        }
-        setLoading(false);
-    }, [blog_id]);
+  const { post, loading, error } = usePost(blog_id);
 
-    if (loading) {
-        return <Loader />;
-    }
+  if (loading) {
+    return <Loader />;
+  }
 
-    if (!blog) {
-        return <PageNotFound />;
-    }
+  if (error) {
+    toast.error("something went wrong while fetching !");
+  }
 
-    let { title, content, banner, author: { personal_info: { username: author_username, name: fullname, profile_img } }, publishedAt } = blog;
-    console.log(blogComments);
-    return (
-        <AnimationWrapper>
-            <BlogPageContext.Provider value={{ blog, setBlog }}>
-                <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
-                    <img src={banner} className="aspect-video" alt="Blog Banner" />
+  if (!post) {
+    return <PageNotFound />;
+  }
 
-                    <div className="mt-12">
-                        <h2>{title}</h2>
-                        <div className="flex max-sm:flex-col justify-between my-8">
-                            <div className="flex gap-5 items-start">
-                                <img src={profile_img} alt={fullname} className="w-12 h-12 rounded-full" />
-                                <p className="capitalize">
-                                    {fullname}
-                                    <br />
-                                    @<Link to={`/user/${author_username}`} className="underline">{fullname}</Link>
-                                </p>
-                            </div>
-                            <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
-                                Published on {getDay(publishedAt)}
-                            </p>
-                        </div>
+  const {
+    id: postId,
+    title,
+    content,
+    image,
+    isLiked,
+    author: { firstname, lastname, email, id: authorId },
+    createdAt,
+  } = post;
+  
+  return (
+    <AnimationWrapper>
+      <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
+        <img src={image} className="aspect-video" alt="Blog Banner" />
 
-                        <div className="my-12 font-gelasio blog-page-content">
-                            <p>{content}</p>
-                        </div>
+        <div className="mt-12">
+          <h2>{title}</h2>
+          <div className="flex max-sm:flex-col justify-between my-8">
+            <div className="flex gap-5 items-start">
+              <img
+                src={"/userprofile.png"}
+                alt={firstname + "_" + lastname}
+                className="w-12 h-12 rounded-full"
+              />
+              <p className="capitalize">
+                {firstname + "_" + lastname}
+                <br />@
+                <Link to={`/user/${authorId}`} className="underline">
+                  {firstname + "_" + lastname}
+                </Link>
+              </p>
+            </div>
+            <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
+              Published on {getDay(createdAt)}
+            </p>
+          </div>
 
-                        <BlogInteraction />
-                        <CommentField/>
-                    </div>
-                    {blogComments.length > 0 && <CommentsContainer commentsData={blogComments} />}
-                </div>
+          <div className="my-12 font-gelasio blog-page-content">
+            <p>{content}</p>
+          </div>
 
-                </BlogPageContext.Provider>
-            </AnimationWrapper>
-        );
+          <BlogInteraction  />
+          <CommentField postId={postId} />
+        </div>
+
+        <CommentsContainer  />
+      </div>
+    </AnimationWrapper>
+  );
 };
 
 export default BlogPage;

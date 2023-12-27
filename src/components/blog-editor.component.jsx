@@ -1,13 +1,21 @@
+import { PiUploadSimpleFill } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import logo from "../imgs/logo.png";
 import EditorJS from "@editorjs/editorjs";
-import { FaDeleteLeft } from "react-icons/fa6";
-// import { toast } from "react-toastify";
-
+import { WithContext as ReactTags } from "react-tag-input";
 import React from "react";
 import { useCreatePost } from "../graphql/hooks";
+
+const KeyCodes = {
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
+// import { toast } from "react-toastify";
 
 export const BlogEditor = () => {
   const [blog, setBlog] = useState({
@@ -28,6 +36,28 @@ export const BlogEditor = () => {
       })
     );
   }, []);
+
+  const handleDelete = (i) => {
+    setBlog((blog) => ({
+      ...blog,
+      tags: blog.tags.filter((tag, index) => index !== i),
+    }));
+  };
+
+  const handleAddition = (tag) => {
+    console.log(tag)
+    setBlog((blog) => ({ ...blog, tags: [...blog.tags, tag] }));
+  };
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = blog.tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setBlog((blog) => ({ ...blog, tags: newTags }));
+  };
 
   const handleTitleKeyStroke = (e) => {
     if (e.keyCode == 13) {
@@ -71,6 +101,7 @@ export const BlogEditor = () => {
             title: blog.title,
             file: blog.image,
             content: data?.blocks[0]?.data?.text ?? "",
+            tags: blog.tags,
           });
         } else {
           return toast.error("Write something in your blog to publish it");
@@ -105,7 +136,10 @@ export const BlogEditor = () => {
               {blog?.image ? (
                 <img className="z-20" src={URL.createObjectURL(blog?.image)} />
               ) : (
-                <img className="z-20" />
+                <div className="h-full w-full flex justify-center items-center">
+
+                <PiUploadSimpleFill className="z-20 w-56 h-56" />
+                </div>
               )}
               <input
                 id="uploadBanner"
@@ -126,7 +160,18 @@ export const BlogEditor = () => {
           ></textarea>
 
           <hr className="w-full opacity-10 my-5" />
-
+          <div className="w-full">
+            <ReactTags
+              tags={blog.tags}
+              delimiters={delimiters}
+              handleDelete={handleDelete}
+              handleAddition={handleAddition}
+              handleDrag={handleDrag}
+              inputFieldPosition="bottom"
+              autocomplete
+            />
+          </div>
+          <hr className="w-full opacity-10 my-5" />
           <div id="textEditor" className="font-gelasio"></div>
         </div>
       </section>

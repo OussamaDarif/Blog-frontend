@@ -8,14 +8,18 @@ import {
   AUTH_EMAIL,
   AUTH_FIRSTNAME,
   AUTH_LASTNAME,
+  COMMENT_MUTATION,
   CREATE_POST_MUTATION,
   GRAPHQL_URL,
   LOGOUT_MUTATION,
+  POSTS_QUERY,
   POST_QUERY,
+  REACT_MUTATION,
   REGISTER_MUTATION,
   client,
 } from "./queries";
 import { useAuthContext } from "../context/auth/authContext";
+import { usePostContext } from "../context/post/postContext";
 
 export function useRegister() {
   const [mutate, { loading, error }] = useMutation(REGISTER_MUTATION);
@@ -143,23 +147,35 @@ export function useLogout() {
 export function useCreatePost() {
   const { user } = useAuthContext();
   const navigate = useNavigate();
+  const { dispatch } = usePostContext();
 
-  const createPost = async ({ title, content, file }) => {
+  const createPost = async ({ title, content, file, tags }) => {
     const formData = new FormData();
+
     const query = `
     mutation {
-        post: createPost(postInput: {title: "${title}", content: "${content}"}) {
-          id
-          content
-          createdAt
-          image
-          title
+        post: createPost(postInput: {title: "${title}", content: "${content}", tags: [${tags
+      .map((tag) => `"${tag.text}"`)
+      .join(" ,")}]}) {
           author {
             id
+            email
             firstname
             lastname
-            email
           }
+          content
+          title
+          createdAt
+          id
+          image
+          tags
+          comments {
+            content
+            username
+            createdAt
+            id
+          }
+          likes
         }
       }
     `;
@@ -172,6 +188,11 @@ export function useCreatePost() {
       method: "POST",
     });
     const { post } = await response.json();
+
+    dispatch({
+      type: "ADD_POST",
+      payload: post,
+    });
     client.writeQuery({
       query: POST_QUERY,
       data: { post },
@@ -183,4 +204,105 @@ export function useCreatePost() {
     navigate("/home");
   };
   return { createPost };
+}
+
+export function usePosts() {
+  const { dispatch } = usePostContext();
+  const { data, loading, error } = useQuery(POSTS_QUERY, {
+    fetchPolicy: "network-only",
+    onCompleted: ({ posts }) => {
+      dispatch({
+        type: "SET_POSTS",
+        payload: posts,
+      });
+    },
+  });
+  return {
+    posts: data?.posts,
+    loading,
+    error: Boolean(error),
+  };
+}
+
+export function usePost(id) {
+  const { dispatch } = usePostContext();
+  const { data, loading, error } = useQuery(POST_QUERY, {
+    variables: { id },
+    onCompleted: ({ post }) => {
+      dispatch({
+        type: "SET_POST",
+        payload: post,
+      });
+    },
+  });
+  return {
+    post: data?.post,
+    loading,
+    error: Boolean(error),
+  };
+}
+
+export function useComment() {
+  const [mutate, { loading, error }] = useMutation(COMMENT_MUTATION);
+  const { user } = useAuthContext();
+  const { dispatch } = usePostContext();
+
+  return {
+    comment: async ({ postId, content }) => {
+      const {
+        data: { comment },
+      } = await mutate({
+        variables: { input: { content, postId } },
+        context: {
+          headers: { Authorization: "Bearer " + user?.token },
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error("Adding comment failed !");
+        },
+        onCompleted: ({ comment }) => {
+          dispatch({
+            type: "ADD_COMMENT",
+            payload: comment,
+          });
+          toast.success("comment added");
+        },
+      });
+
+      return comment;
+    },
+    loading,
+    error: Boolean(error),
+  };
+}
+
+export function useReact() {
+  const [mutate, { loading, error }] = useMutation(REACT_MUTATION);
+  const { user } = useAuthContext();
+  const { dispatch } = usePostContext();
+
+  return {
+    react: async ({ postId }) => {
+      const {
+        data: { react },
+      } = await mutate({
+        variables: { id: postId },
+        context: {
+          headers: { Authorization: "Bearer " + user?.token },
+        },
+        onError: () => {
+          toast.error("react failed !");
+        },
+        onCompleted: () => {
+          dispatch({
+            type: "ADD_REACTION",
+          });
+        },
+      });
+
+      return react;
+    },
+    loading,
+    error: Boolean(error),
+  };
 }

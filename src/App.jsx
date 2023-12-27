@@ -9,11 +9,13 @@ import { ApolloProvider } from "@apollo/client";
 import { client } from "./graphql/queries";
 import { AuthProvider } from "./context/auth/authContext";
 import RequireAuth from "./common/RequireAuth";
+import { PostProvider } from "./context/post/postContext";
 
 const App = () => {
   return (
     <ApolloProvider client={client}>
       <AuthProvider>
+        <PostProvider>
         {/* <Router>
          <Navbar />
         
@@ -48,6 +50,7 @@ const App = () => {
             {/* <Route path="/blog" element={<Blog/>}/> */}
           </Routes>
         </Router>
+        </PostProvider>
       </AuthProvider>
     </ApolloProvider>
   );

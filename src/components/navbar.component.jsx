@@ -48,7 +48,7 @@ const Navbar = () => {
           )}
           {user ? (
             <>
-              <h1>Hello {user.firstname + " " + user.lastname}</h1>
+              <h1>Hello {user.firstname + "_" + user.lastname}</h1>
               <button className="btn-dark py-2" onClick={handleLogout}>
                 Logout
               </button>

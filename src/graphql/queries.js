@@ -60,6 +60,32 @@ export const CREATE_POST_MUTATION = gql`
   }
 `;
 
+export const POSTS_QUERY = gql`
+  query {
+    posts {
+      author {
+        id
+        email
+        firstname
+        lastname
+      }
+      content
+      title
+      createdAt
+      id
+      image
+      tags
+      comments {
+        content
+        username
+        createdAt
+        id
+      }
+      likes
+    }
+  }
+`;
+
 export const POST_QUERY = gql`
   query ($id: String!) {
     post(id: $id) {
@@ -74,6 +100,34 @@ export const POST_QUERY = gql`
         firstname
         lastname
       }
+      comments {
+        content
+        username
+        createdAt
+        id
+      }
+      tags
+      likes
+      isLiked
     }
+  }
+`;
+
+export const COMMENT_MUTATION = gql`
+  mutation ($input: CommentInput!) {
+    comment(commentInput: $input) {
+      content
+      createdAt
+      postId
+      username
+      userId
+      id
+    }
+  }
+`;
+
+export const REACT_MUTATION = gql`
+  mutation ($id: String!) {
+    react(postId: $id)
   }
 `;
