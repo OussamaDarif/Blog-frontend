@@ -3,7 +3,8 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 export const GRAPHQL_URL = "http://localhost:8082/graphql";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
-if (process.env.NODE_ENV !== "production") {  // Adds messages only in a dev environment
+if (process.env.NODE_ENV !== "production") {
+  // Adds messages only in a dev environment
   loadDevMessages();
   loadErrorMessages();
 }
@@ -67,8 +68,8 @@ export const CREATE_POST_MUTATION = gql`
 `;
 
 export const POSTS_QUERY = gql`
-  query {
-    posts {
+  query ($offset: Int!, $limit: Int!) {
+    posts(offset: $offset, limit: $limit) {
       author {
         id
         email

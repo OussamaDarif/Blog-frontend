@@ -8,10 +8,13 @@ import Loader from "./loader.component";
 import MinimalBlogPost from "./nobanner-blog-post.component";
 import { toast } from "react-toastify";
 import { usePosts } from "../graphql/hooks";
+import { usePostContext } from "../context/post/postContext";
 
 const HomePage = () => {
   const [pageState] = useState("home");
-  const { posts, loading, error } = usePosts();
+  const { loading, error, fetchMore } = usePosts();
+  const { posts, dispatch } = usePostContext();
+
   const navigate = useNavigate();
 
   let tags = posts?.map((post) => post.tags).flat();
@@ -33,11 +36,33 @@ const HomePage = () => {
               {posts == null ? (
                 <Loader />
               ) : posts.length > 0 ? (
-                posts.map((post, i) => (
-                  <AnimationWrapper key={i} transition={{ delay: i * 0.08 }}>
-                    <BlogPostCard post={post} />
-                  </AnimationWrapper>
-                ))
+                <div>
+                  {posts?.map((post, i) => (
+                    <AnimationWrapper key={i} transition={{ delay: i * 0.08 }}>
+                      <BlogPostCard post={post} key={i} />
+                    </AnimationWrapper>
+                  ))}
+                  <div className="w-full flex justify-center items-center">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 bg-black text-white font-bold py-2 px-4 mt-4 rounded-full focus:outline-none focus:shadow-outline-blue"
+                      onClick={() => {
+                        fetchMore({
+                          variables: {
+                            offset: posts?.length,
+                          },
+                          updateQuery: (prevResult, { fetchMoreResult }) => {
+                            dispatch({
+                              type: "SET_POSTS",
+                              payload: fetchMoreResult.posts,
+                            });
+                          },
+                        });
+                      }}
+                    >
+                      Show More
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <NoDataMessage message="No Blogs Published" />
               )}
@@ -71,17 +96,20 @@ const HomePage = () => {
               <h1 className="font-medium text-xl mb-8">
                 Trending<i className="fi fi-rr-arrow-trend-up"></i>
               </h1>
-              {posts == null ? (
+
+              {posts == null || loading ? (
                 <Loader />
               ) : posts.length > 0 ? (
-                [...posts]
-                  ?.sort((a, b) => b.likes - a.likes)
-                  .slice(0, 3)
-                  .map((post, i) => (
-                    <AnimationWrapper key={i}>
-                      <MinimalBlogPost post={post} index={i} />
-                    </AnimationWrapper>
-                  ))
+                <div>
+                  {[...posts]
+                    ?.sort((a, b) => b.likes - a.likes)
+                    .slice(0, 3)
+                    .map((post, i) => (
+                      <AnimationWrapper key={i}>
+                        <MinimalBlogPost post={post} index={i} />
+                      </AnimationWrapper>
+                    ))}
+                </div>
               ) : (
                 <NoDataMessage message="No Trending Blogs Found" />
               )}

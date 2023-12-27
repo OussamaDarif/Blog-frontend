@@ -9,6 +9,8 @@ const MinimalBlogPost = ({ post, index }) => {
     createdAt
   } = post;
 
+  console.log(post)
+  
   index++;
 
   return (

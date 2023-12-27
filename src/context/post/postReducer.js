@@ -8,7 +8,7 @@ export const postReducer = (state, action) => {
     case "SET_POSTS":
       return {
         ...state,
-        posts: action.payload,
+        posts: [...state.posts, ...action.payload],
       };
     case "SET_POST":
       return {
@@ -28,7 +28,9 @@ export const postReducer = (state, action) => {
         ...state,
         post: {
           ...state.post,
-          likes: state.post.isLiked ? state.post.likes - 1 : state.post.likes + 1,
+          likes: state.post.isLiked
+            ? state.post.likes - 1
+            : state.post.likes + 1,
           isLiked: !state.post.isLiked,
         },
       };

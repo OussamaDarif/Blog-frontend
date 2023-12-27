@@ -153,7 +153,7 @@ export function useCreatePost() {
 
   const createPost = async ({ title, content, file, tags }) => {
     const formData = new FormData();
-    
+
     let variables = {
       input: {
         title,
@@ -186,10 +186,13 @@ export function useCreatePost() {
           isLiked
         }
       }`;
-    formData.append("operations", JSON.stringify({
-      query: query,
-      variables: variables,
-    }));
+    formData.append(
+      "operations",
+      JSON.stringify({
+        query: query,
+        variables: variables,
+      })
+    );
 
     formData.append(
       "map",
@@ -233,7 +236,11 @@ export function useCreatePost() {
 
 export function usePosts() {
   const { dispatch } = usePostContext();
-  const { data, loading, error } = useQuery(POSTS_QUERY, {
+  const { data, loading, error, fetchMore } = useQuery(POSTS_QUERY, {
+    variables: {
+      offset: 0,
+      limit: 5,
+    },
     fetchPolicy: "network-only",
     onCompleted: ({ posts }) => {
       dispatch({
@@ -243,7 +250,7 @@ export function usePosts() {
     },
   });
   return {
-    posts: data?.posts,
+    fetchMore,
     loading,
     error: Boolean(error),
   };

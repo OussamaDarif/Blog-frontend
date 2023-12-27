@@ -8,10 +8,9 @@ export const usePostContext = () => useContext(PostContext);
 
 export const PostProvider = ({ children }) => {
   const initialState = {
-    posts:[],
+    posts: [],
     post: null
   };
-
 
   const [state, dispatch] = useReducer(postReducer, initialState);
 
