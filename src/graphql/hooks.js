@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { print as printGraphql } from "graphql";
+import { gql } from "@apollo/client";
 
 import {
   ACCESS_TOKEN_KEY,
@@ -152,11 +154,9 @@ export function useCreatePost() {
   const createPost = async ({ title, content, file, tags }) => {
     const formData = new FormData();
 
-    const query = `
-    mutation {
-        post: createPost(postInput: {title: "${title}", content: "${content}", tags: [${tags
-      .map((tag) => `"${tag.text}"`)
-      .join(" ,")}]}) {
+    const query = gql`
+      mutation ($input: PostInput!) {
+        post: createPost(postInput: $input) {
           author {
             id
             email
@@ -176,32 +176,59 @@ export function useCreatePost() {
             id
           }
           likes
+          isLiked
         }
       }
     `;
-    formData.append("operations", JSON.stringify({ query }));
-    formData.append("map", JSON.stringify({ file: ["variables.file"] }));
+    formData.append(
+      "operations",
+      JSON.stringify({
+        query: printGraphql(query),
+        variables: {
+          input: {
+            title,
+            content,
+            tags: tags,
+          },
+        },
+      })
+    );
+    formData.append(
+      "map",
+      JSON.stringify({
+        file: ["variables.file"],
+      })
+    );
     formData.append("file", file);
-    const response = await fetch(GRAPHQL_URL, {
-      headers: { Authorization: `Bearer ${user?.token}` },
-      body: formData,
-      method: "POST",
-    });
-    const { post } = await response.json();
+    try {
+      console.log([...formData.entries()]);
+      const response = await fetch(GRAPHQL_URL, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: formData,
+        method: "POST",
+      });
+      const {
+        data: { post },
+      } = await response.json();
 
-    dispatch({
-      type: "ADD_POST",
-      payload: post,
-    });
-    client.writeQuery({
-      query: POST_QUERY,
-      data: { post },
-      variables: {
-        id: post?.id,
-      },
-    });
-    toast.success("Post created");
-    navigate("/home");
+      dispatch({
+        type: "ADD_POST",
+        payload: post,
+      });
+      client.writeQuery({
+        query: POST_QUERY,
+        data: { post },
+        variables: {
+          id: post?.id,
+        },
+      });
+      toast.success("Post created");
+      navigate("/home");
+    } catch (error) {
+      toast.error("Something went wrong while creating the post !");
+    }
   };
   return { createPost };
 }
@@ -226,14 +253,16 @@ export function usePosts() {
 
 export function usePost(id) {
   const { dispatch } = usePostContext();
-  const {user} = useAuthContext();
-  const headers = user?.token ? {
-    "Authorization": `Bearer ${user?.token}` 
-  } : {};
+  const { user } = useAuthContext();
+  const headers = user?.token
+    ? {
+        Authorization: `Bearer ${user?.token}`,
+      }
+    : {};
   const { data, loading, error } = useQuery(POST_QUERY, {
     variables: { id },
     context: {
-      headers
+      headers,
     },
     onCompleted: ({ post }) => {
       dispatch({

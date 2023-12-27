@@ -57,9 +57,9 @@ const BlogPage = () => {
               <p className="capitalize">
                 {firstname + "_" + lastname}
                 <br />
-                <div className="underline">
+                <span className="underline">
                   @{firstname + "_" + lastname}
-                </div>
+                </span>
               </p>
             </div>
             <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">

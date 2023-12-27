@@ -78,9 +78,7 @@ export const BlogEditor = () => {
     setBlog((blog) => ({ ...blog, image: e.target.files[0] }));
   };
 
-  const handlePublish = async (e) => {
-    e.preventDefault();
-
+  const handlePublish = async () => {
     if (!blog.image) {
       return toast.error("Upload a blog image to publish it");
     }
@@ -107,6 +105,7 @@ export const BlogEditor = () => {
               .join("\n"),
             tags: blog.tags,
           });
+          
         } else {
           return toast.error("Write something in your blog to publish it");
         }

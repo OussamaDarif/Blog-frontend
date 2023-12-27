@@ -1,6 +1,12 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 export const GRAPHQL_URL = "http://localhost:8082/graphql";
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+
+if (process.env.NODE_ENV !== "production") {  // Adds messages only in a dev environment
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 export const client = new ApolloClient({
   uri: GRAPHQL_URL,
