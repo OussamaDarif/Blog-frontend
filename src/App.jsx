@@ -1,4 +1,9 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import UserSignInForm from "./components/userSignInForm";
 import { BlogEditor } from "./components/blog-editor.component";
 import HomePage from "./components/home-component";
@@ -10,13 +15,14 @@ import { client } from "./graphql/queries";
 import { AuthProvider } from "./context/auth/authContext";
 import RequireAuth from "./common/RequireAuth";
 import { PostProvider } from "./context/post/postContext";
+import SearchResult from "./components/SearchResult";
 
 const App = () => {
   return (
     <ApolloProvider client={client}>
       <AuthProvider>
         <PostProvider>
-        {/* <Router>
+          {/* <Router>
          <Navbar />
         
         <Routes>
@@ -30,26 +36,28 @@ const App = () => {
         </Routes>
         
       </Router> */}
-        <Router>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path="signup" element={<UserSignUpForm />} />
-              <Route path="home" element={<HomePage />} />
-              <Route path="signin" element={<UserSignInForm />} />
-              <Route path="blog/:blog_id" element={<BlogPage />} />
-            </Route>
-            <Route
-              path="/blogeditor"
-              element={
-                <RequireAuth>
-                  <BlogEditor />
-                </RequireAuth>
-              }
-            />
+          <Router>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route exact path="/" element={<Navigate to="/home" />} />
+                <Route path="signup" element={<UserSignUpForm />} />
+                <Route path="home" element={<HomePage />} />
+                <Route path="signin" element={<UserSignInForm />} />
+                <Route path="blog/:blog_id" element={<BlogPage />} />
+                <Route path="search" element={<SearchResult />} />
+              </Route>
+              <Route
+                path="/blogeditor"
+                element={
+                  <RequireAuth>
+                    <BlogEditor />
+                  </RequireAuth>
+                }
+              />
 
-            {/* <Route path="/blog" element={<Blog/>}/> */}
-          </Routes>
-        </Router>
+              {/* <Route path="/blog" element={<Blog/>}/> */}
+            </Routes>
+          </Router>
         </PostProvider>
       </AuthProvider>
     </ApolloProvider>

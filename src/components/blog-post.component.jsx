@@ -11,17 +11,19 @@ const BlogPostCard = ({ post }) => {
       className="flex gap-8 items-center border-b border-grey pb-5 mb-4"
     >
       <div className="w-full">
-        <div className="flex gap-2 items-center mb-7">
-          <img
-            src={"/userprofile.png"}
-            className="w-6 h-6 rounded-full"
-            alt="Profile"
-          />
-          <p className="line-clamp-1">
-            {firstname + "_" + lastname} @{firstname + "_" + lastname}
-          </p>
-          <p className="min-w-fit">{getDay(createdAt)}</p>
-        </div>
+        {firstname && lastname && (
+          <div className="flex gap-2 items-center mb-7">
+            <img
+              src={"/userprofile.png"}
+              className="w-6 h-6 rounded-full"
+              alt="Profile"
+            />
+            <p className="line-clamp-1">
+              {firstname + "_" + lastname} @{firstname + "_" + lastname}
+            </p>
+            <p className="min-w-fit">{getDay(createdAt)}</p>
+          </div>
+        )}
 
         <h1 className="blog-title">{title}</h1>
         <p className="my-3 text-xl font-gelasio leading-7 max-sm:hidden md:max-[1100px]:hidden line-clamp-2">

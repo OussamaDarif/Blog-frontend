@@ -141,7 +141,7 @@ export const BlogEditor = () => {
                 <img className="z-20" src={URL.createObjectURL(blog?.image)} />
               ) : (
                 <div className="h-full w-full flex justify-center items-center">
-                  <PiUploadSimpleFill className="z-20 w-56 h-56" />
+                  <PiUploadSimpleFill className="w-56 h-56" />
                 </div>
               )}
               <input

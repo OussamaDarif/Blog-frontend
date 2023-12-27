@@ -1,29 +1,21 @@
+import { useNavigate } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
-import InPageNavigation, { activeTabRef } from "./inpage-navigation.component";
+import InPageNavigation from "./inpage-navigation.component";
 import NoDataMessage from "./nodata.component";
 import BlogPostCard from "./blog-post.component";
 import { useState } from "react";
 import Loader from "./loader.component";
 import MinimalBlogPost from "./nobanner-blog-post.component";
-import { staticBlogs, staticTrendingBlogs } from "../staticData";
 import { toast } from "react-toastify";
 import { usePosts } from "../graphql/hooks";
 
 const HomePage = () => {
-  const [trendingBlogs] = useState([]);
   const [pageState] = useState("home");
   const { posts, loading, error } = usePosts();
+  const navigate = useNavigate();
 
-  let categories = [
-    "General Medicine",
-    "Cardiology",
-    "Dermatology",
-    "Pediatrics",
-    "Neurology",
-    "Surgery",
-    "Oncology",
-    "Health and Wellness",
-  ];
+  let tags = posts?.map((post) => post.tags).flat();
+  tags = [...new Set(tags)];
 
   if (error) {
     toast.error("Something went wrong while fetching.");
@@ -43,9 +35,7 @@ const HomePage = () => {
               ) : posts.length > 0 ? (
                 posts.map((post, i) => (
                   <AnimationWrapper key={i} transition={{ delay: i * 0.08 }}>
-                    <BlogPostCard
-                      post={post}
-                    />
+                    <BlogPostCard post={post} />
                   </AnimationWrapper>
                 ))
               ) : (
@@ -57,19 +47,21 @@ const HomePage = () => {
         <div className="min-w-[40%] lg:min-w-[400px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden">
           <div className="flex flex-col gap-10">
             <div>
-              <h1 className="font-medium text-xl mb-8">
-                Stories from all interests
-              </h1>
+              <h1 className="font-medium text-xl mb-8">Tags</h1>
               <div className="flex gap-3 flex-wrap">
-                {categories.map((category, i) => (
+                {tags.slice(0, 10).map((tag, i) => (
                   <button
+                    onClick={() => {
+                      const searchParams = new URLSearchParams();
+                      searchParams.set("query", tag);
+                      navigate(`/search?${searchParams}`);
+                    }}
                     key={i}
                     className={
-                      "tag " +
-                      (pageState === category ? "bg-black text-white" : "")
+                      "tag " + (pageState === tag ? "bg-black text-white" : "")
                     }
                   >
-                    {category}
+                    {tag}
                   </button>
                 ))}
               </div>
@@ -79,14 +71,17 @@ const HomePage = () => {
               <h1 className="font-medium text-xl mb-8">
                 Trending<i className="fi fi-rr-arrow-trend-up"></i>
               </h1>
-              {trendingBlogs == null ? (
+              {posts == null ? (
                 <Loader />
-              ) : trendingBlogs.length > 0 ? (
-                trendingBlogs.map((blog, i) => (
-                  <AnimationWrapper key={i}>
-                    <MinimalBlogPost blog={blog} index={i} />
-                  </AnimationWrapper>
-                ))
+              ) : posts.length > 0 ? (
+                [...posts]
+                  ?.sort((a, b) => b.likes - a.likes)
+                  .slice(0, 3)
+                  .map((post, i) => (
+                    <AnimationWrapper key={i}>
+                      <MinimalBlogPost post={post} index={i} />
+                    </AnimationWrapper>
+                  ))
               ) : (
                 <NoDataMessage message="No Trending Blogs Found" />
               )}

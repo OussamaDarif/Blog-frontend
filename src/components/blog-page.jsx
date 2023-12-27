@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
 import Loader from "../components/loader.component";
 import PageNotFound from "./404-page";
@@ -56,10 +56,10 @@ const BlogPage = () => {
               />
               <p className="capitalize">
                 {firstname + "_" + lastname}
-                <br />@
-                <Link to={`/user/${authorId}`} className="underline">
-                  {firstname + "_" + lastname}
-                </Link>
+                <br />
+                <div className="underline">
+                  @{firstname + "_" + lastname}
+                </div>
               </p>
             </div>
             <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
