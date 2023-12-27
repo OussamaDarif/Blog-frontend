@@ -3,7 +3,7 @@ import AnimationWrapper from "../common/page-animation";
 import InPageNavigation from "./inpage-navigation.component";
 import NoDataMessage from "./nodata.component";
 import BlogPostCard from "./blog-post.component";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Loader from "./loader.component";
 import MinimalBlogPost from "./nobanner-blog-post.component";
 import { toast } from "react-toastify";
@@ -16,6 +16,12 @@ const HomePage = () => {
   const { posts, dispatch } = usePostContext();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch({
+      type: "CLEAR_POSTS"
+    })
+  }, [])
 
   let tags = posts?.map((post) => post.tags).flat();
   tags = [...new Set(tags)];

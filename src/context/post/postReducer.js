@@ -3,12 +3,17 @@ export const postReducer = (state, action) => {
     case "ADD_POST":
       return {
         ...state,
-        posts: [...state.posts, action.payload],
+        posts: [ action.payload,...state.posts],
       };
     case "SET_POSTS":
       return {
         ...state,
         posts: [...state.posts, ...action.payload],
+      };
+    case "CLEAR_POSTS":
+      return {
+        ...state,
+        posts: [],
       };
     case "SET_POST":
       return {
