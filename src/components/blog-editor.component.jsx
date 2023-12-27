@@ -18,6 +18,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 // import { toast } from "react-toastify";
 
 export const BlogEditor = () => {
+  const [loading, setLoading] = useState(false);
   const [blog, setBlog] = useState({
     title: "",
     content: "",
@@ -79,6 +80,7 @@ export const BlogEditor = () => {
   };
 
   const handlePublish = async () => {
+    setLoading(true);
     if (!blog.image) {
       return toast.error("Upload a blog image to publish it");
     }
@@ -105,12 +107,13 @@ export const BlogEditor = () => {
               .join("\n"),
             tags: blog.tags,
           });
-          
         } else {
           return toast.error("Write something in your blog to publish it");
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -124,7 +127,11 @@ export const BlogEditor = () => {
         <p className="text-xl font-bold">Med Blog</p>
 
         <div className="flex gap-4 ml-auto">
-          <button className="btn-dark py-2" onClick={handlePublish}>
+          <button
+            className="btn-dark py-2"
+            onClick={handlePublish}
+            disabled={loading}
+          >
             Publish
           </button>
         </div>

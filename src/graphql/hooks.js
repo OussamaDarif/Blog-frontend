@@ -153,8 +153,15 @@ export function useCreatePost() {
 
   const createPost = async ({ title, content, file, tags }) => {
     const formData = new FormData();
-
-    const query = gql`
+    
+    let variables = {
+      input: {
+        title,
+        content,
+        tags: tags.map((tag) => tag.text),
+      },
+    };
+    const query = `
       mutation ($input: PostInput!) {
         post: createPost(postInput: $input) {
           author {
@@ -178,21 +185,12 @@ export function useCreatePost() {
           likes
           isLiked
         }
-      }
-    `;
-    formData.append(
-      "operations",
-      JSON.stringify({
-        query: printGraphql(query),
-        variables: {
-          input: {
-            title,
-            content,
-            tags: tags,
-          },
-        },
-      })
-    );
+      }`;
+    formData.append("operations", JSON.stringify({
+      query: query,
+      variables: variables,
+    }));
+
     formData.append(
       "map",
       JSON.stringify({
